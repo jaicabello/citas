@@ -7,14 +7,17 @@ import {
   TextInput,
   View,
   ScrollView,
+  Pressable,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 
-const Formulario = ({showModal}) => {
+const Formulario = ({showModal, setShowModal}) => {
   const [paciente, setPaciente] = useState('');
   const [propietario, setPropietario] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
   const [sintomas, setSintomas] = useState('');
+  const [fecha, setFecha] = useState(new Date());
 
   return (
     <Modal animationType="slide" visible={showModal}>
@@ -23,6 +26,11 @@ const Formulario = ({showModal}) => {
           <Text style={styles.titulo}>
             Nueva <Text style={styles.tituloBold}>Cita</Text>
           </Text>
+          <Pressable
+            style={styles.btnCancelar}
+            onPress={() => setShowModal(!showModal)}>
+            <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
+          </Pressable>
           <View style={styles.campo}>
             <Text style={styles.label}>Nombre Paciente</Text>
             <TextInput
@@ -67,6 +75,16 @@ const Formulario = ({showModal}) => {
             />
           </View>
           <View style={styles.campo}>
+            <Text style={styles.label}>Fecha Alta</Text>
+            <View style={styles.fechaContenedor}>
+              <DatePicker
+                date={fecha}
+                locale={'es'}
+                onDateChange={date => setFecha(date)}
+              />
+            </View>
+          </View>
+          <View style={styles.campo}>
             <Text style={styles.label}>Síntomas</Text>
             <TextInput
               style={[styles.input, styles.sintomasInput]}
@@ -100,6 +118,20 @@ const styles = StyleSheet.create({
   tituloBold: {
     fontWeight: '900',
   },
+  btnCancelar: {
+    marginVertical: 30,
+    backgroundColor: '#5827A4',
+    marginHorizontal: 30,
+    padding: 15,
+    borderRadius: 10,
+  },
+  btnCancelarTexto: {
+    color: '#FFF',
+    textAlign: 'center',
+    fontWeight: '900',
+    fontSize: 16,
+    textTransform: 'uppercase',
+  },
   campo: {
     marginTop: 10,
     marginHorizontal: 30,
@@ -118,6 +150,10 @@ const styles = StyleSheet.create({
   },
   sintomasInput: {
     height: 100,
+  },
+  fechaContenedor: {
+    backgroundColor: '#FFF',
+    borderRadius: 10,
   },
 });
 

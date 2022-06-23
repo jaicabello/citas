@@ -17,7 +17,7 @@ const App = () => {
       <Pressable onPress={nuevaCitaHandler} style={styles.btnNuevaCita}>
         <Text style={styles.btnTextoNuevaCita}>Nueva Cita</Text>
       </Pressable>
-      <Formulario showModal={showModal} />
+      <Formulario showModal={showModal} setShowModal={setShowModal} />
     </SafeAreaView>
   );
 };
