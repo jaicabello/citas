@@ -8,6 +8,7 @@ import {
   View,
   ScrollView,
   Pressable,
+  Alert,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
@@ -18,6 +19,13 @@ const Formulario = ({showModal, setShowModal}) => {
   const [telefono, setTelefono] = useState('');
   const [sintomas, setSintomas] = useState('');
   const [fecha, setFecha] = useState(new Date());
+
+  const handleCita = () => {
+    if ([paciente, propietario, email, sintomas, fecha].includes('')) {
+      Alert.alert('Error', 'Todos los campos son obligatorios', [{text: 'Ok'}]);
+      return;
+    }
+  };
 
   return (
     <Modal animationType="slide" visible={showModal}>
@@ -97,6 +105,9 @@ const Formulario = ({showModal, setShowModal}) => {
               numberOfLines={4}
             />
           </View>
+          <Pressable style={styles.btnNuevaCita} onPress={handleCita}>
+            <Text style={styles.btnNuevaCitaTexto}>Agregar Paciente</Text>
+          </Pressable>
         </ScrollView>
       </SafeAreaView>
     </Modal>
@@ -154,6 +165,20 @@ const styles = StyleSheet.create({
   fechaContenedor: {
     backgroundColor: '#FFF',
     borderRadius: 10,
+  },
+  btnNuevaCita: {
+    marginVertical: 50,
+    backgroundColor: '#F59E0B',
+    paddingVertical: 15,
+    marginHorizontal: 30,
+    borderRadius: 10,
+  },
+  btnNuevaCitaTexto: {
+    textAlign: 'center',
+    fontWeight: '900',
+    fontSize: 16,
+    color: '#5827A4',
+    textTransform: 'uppercase',
   },
 });
 
