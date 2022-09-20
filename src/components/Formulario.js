@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
-const Formulario = ({showModal, setShowModal}) => {
+const Formulario = ({showModal, setShowModal, pacientes, setPacientes}) => {
   const [paciente, setPaciente] = useState('');
   const [propietario, setPropietario] = useState('');
   const [email, setEmail] = useState('');
@@ -25,6 +25,27 @@ const Formulario = ({showModal, setShowModal}) => {
       Alert.alert('Error', 'Todos los campos son obligatorios', [{text: 'Ok'}]);
       return;
     }
+    const nuevoPaciente = {
+      id: Date.now(),
+      paciente,
+      propietario,
+      email,
+      telefono,
+      fecha,
+      sintomas,
+    };
+    setPacientes([...pacientes, nuevoPaciente]);
+    closeAndRefreshForm();
+  };
+
+  const closeAndRefreshForm = () => {
+    setShowModal(false);
+    setPaciente('');
+    setPropietario('');
+    setEmail('');
+    setSintomas('');
+    setTelefono('');
+    setFecha(new Date());
   };
 
   return (
