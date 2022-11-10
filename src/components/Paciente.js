@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View, StyleSheet, Pressable} from 'react-native';
 
-export const Paciente = ({item}) => {
+export const Paciente = ({item, setShowModal, pacienteEditar}) => {
   const {paciente, fecha} = item;
 
   const formatearFecha = fecha => {
@@ -22,7 +22,14 @@ export const Paciente = ({item}) => {
       <Text style={styles.fecha}>{formatearFecha(fecha)}</Text>
       <View style={styles.contenedorBotones}>
         <Pressable style={[styles.btn, styles.btnEditar]}>
-          <Text style={styles.btnTexto}>Editar</Text>
+          <Text
+            style={styles.btnTexto}
+            onPress={() => {
+              setShowModal(true);
+              pacienteEditar(id);
+            }}>
+            Editar
+          </Text>
         </Pressable>
         <Pressable style={[styles.btn, styles.btnEliminar]}>
           <Text style={styles.btnTexto}>Eliminar</Text>
@@ -59,14 +66,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
   },
-  btn: {},
+  btn: {
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    boderRadious: 5,
+  },
   btnEditar: {
     backgroundColor: '#F59E0B',
   },
   btnEliminar: {
     backgroundColor: '#EF4444',
   },
-  btnTexto: {},
+  btnTexto: {
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    fontSize: 12,
+    color: '#FFF',
+  },
 });
 
 export default Paciente;

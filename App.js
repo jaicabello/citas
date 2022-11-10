@@ -12,6 +12,12 @@ import Paciente from './src/components/Paciente';
 const App = () => {
   const [showModal, setShowModal] = useState(false);
   const [pacientes, setPacientes] = useState([]);
+  const [paciente, setPaciente] = useState({});
+
+  const pacienteEditar = id => {
+    const pacienteEditar = pacientes.filter(paciente => paciente.id === id);
+    setPaciente(pacienteEditar[0]);
+  };
 
   const nuevaCitaHandler = () => {
     setShowModal(true);
@@ -33,8 +39,13 @@ const App = () => {
           data={pacientes}
           keyExtractor={item => item.id}
           renderItem={({item}) => {
-            console.log('renderItem: ', item);
-            return <Paciente item={item} />;
+            return (
+              <Paciente
+                item={item}
+                setShowModal={setShowModal}
+                pacienteEditar={pacienteEditar}
+              />
+            );
           }}
         />
       )}
