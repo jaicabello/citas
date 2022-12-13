@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Modal,
   Text,
@@ -12,7 +12,15 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
-const Formulario = ({showModal, setShowModal, pacientes, setPacientes}) => {
+const Formulario = ({
+  showModal,
+  pacientes,
+  setPacientes,
+  paciente: pacienteObj,
+  setPaciente: setPacienteApp,
+  cerrarModal,
+}) => {
+  const [id, setId] = useState('');
   const [paciente, setPaciente] = useState('');
   const [propietario, setPropietario] = useState('');
   const [email, setEmail] = useState('');
@@ -20,13 +28,25 @@ const Formulario = ({showModal, setShowModal, pacientes, setPacientes}) => {
   const [sintomas, setSintomas] = useState('');
   const [fecha, setFecha] = useState(new Date());
 
+  useEffect(() => {
+    if (Object.keys(pacienteObj).length > 0) {
+      setId(pacienteObj.id);
+      setPaciente(pacienteObj.paciente);
+      setPropietario(pacienteObj.propietario);
+      setEmail(pacienteObj.email);
+      setTelefono(pacienteObj.telefono);
+      setSintomas(pacienteObj.sintomas);
+      setFecha(pacienteObj.fecha);
+    }
+  }, [pacienteObj]);
+
   const handleCita = () => {
     if ([paciente, propietario, email, sintomas, fecha].includes('')) {
       Alert.alert('Error', 'Todos los campos son obligatorios', [{text: 'Ok'}]);
       return;
     }
+
     const nuevoPaciente = {
-      id: Date.now(),
       paciente,
       propietario,
       email,
@@ -34,12 +54,31 @@ const Formulario = ({showModal, setShowModal, pacientes, setPacientes}) => {
       fecha,
       sintomas,
     };
-    setPacientes([...pacientes, nuevoPaciente]);
+
+    // Revisar si es un registro nuevo o edicion
+    if (id) {
+      // Existe registro por tanto es editar
+      nuevoPaciente.id = id;
+      const pacientesActualizados = pacientes.map(pacienteState => {
+        return pacienteState.id === nuevoPaciente.id
+          ? nuevoPaciente
+          : pacienteState;
+      });
+      setPacientes(pacientesActualizados);
+      setPacienteApp({});
+    } else {
+      // Crear nuevo registro
+      nuevoPaciente.id = Date.now();
+      setPacientes([...pacientes, nuevoPaciente]);
+    }
+
     closeAndRefreshForm();
   };
 
   const closeAndRefreshForm = () => {
-    setShowModal(false);
+    cerrarModal();
+    setPacienteApp({});
+    setId('');
     setPaciente('');
     setPropietario('');
     setEmail('');
@@ -53,11 +92,12 @@ const Formulario = ({showModal, setShowModal, pacientes, setPacientes}) => {
       <SafeAreaView style={styles.contenido}>
         <ScrollView>
           <Text style={styles.titulo}>
-            Nueva <Text style={styles.tituloBold}>Cita</Text>
+            {pacienteObj.id ? 'Editar' : 'Nueva'}{' '}
+            <Text style={styles.tituloBold}>Cita</Text>
           </Text>
           <Pressable
             style={styles.btnCancelar}
-            onPress={() => setShowModal(!showModal)}>
+            onPress={() => closeAndRefreshForm()}>
             <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
           </Pressable>
           <View style={styles.campo}>
@@ -127,7 +167,9 @@ const Formulario = ({showModal, setShowModal, pacientes, setPacientes}) => {
             />
           </View>
           <Pressable style={styles.btnNuevaCita} onPress={handleCita}>
-            <Text style={styles.btnNuevaCitaTexto}>Agregar Paciente</Text>
+            <Text style={styles.btnNuevaCitaTexto}>
+              {pacienteObj.id ? 'Editar' : 'Agregar'} Paciente
+            </Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>

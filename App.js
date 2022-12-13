@@ -5,23 +5,53 @@ import {
   Text,
   Pressable,
   FlatList,
+  Alert,
+  Modal,
 } from 'react-native';
 import Formulario from './src/components/Formulario';
 import Paciente from './src/components/Paciente';
+import {InformacionPaciente} from './src/components/InformacionPaciente';
 
 const App = () => {
   const [showModal, setShowModal] = useState(false);
   const [pacientes, setPacientes] = useState([]);
   const [paciente, setPaciente] = useState({});
+  const [modalPaciente, setModalPaciente] = useState(false);
 
   const pacienteEditar = id => {
-    const pacienteEditar = pacientes.filter(paciente => paciente.id === id);
+    const pacienteEditar = pacientes.filter(
+      pacienteState => pacienteState.id === id,
+    );
     setPaciente(pacienteEditar[0]);
+  };
+
+  const pacienteEliminar = id => {
+    Alert.alert(
+      '¿Deseas eliminar este paciente?',
+      'Un paciente eliminado no se puede recuperar',
+      [
+        {text: 'Cancelar'},
+        {
+          text: 'Si, Eliminar',
+          onPress: () => {
+            const pacientesActualizados = pacientes.filter(
+              pacienteState => pacienteState.id !== id,
+            );
+            setPacientes(pacientesActualizados);
+          },
+        },
+      ],
+    );
   };
 
   const nuevaCitaHandler = () => {
     setShowModal(true);
   };
+
+  const cerrarModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.titulo}>
@@ -37,24 +67,41 @@ const App = () => {
         <FlatList
           style={styles.listado}
           data={pacientes}
-          keyExtractor={item => item.id}
+          keyExtractor={item => {
+            console.log('item: ', item);
+            return item.id;
+          }}
           renderItem={({item}) => {
             return (
               <Paciente
                 item={item}
                 setShowModal={setShowModal}
+                setPaciente={setPaciente}
                 pacienteEditar={pacienteEditar}
+                pacienteEliminar={pacienteEliminar}
+                setModalPaciente={setModalPaciente}
               />
             );
           }}
         />
       )}
-      <Formulario
-        showModal={showModal}
-        setShowModal={setShowModal}
-        pacientes={pacientes}
-        setPacientes={setPacientes}
-      />
+      {showModal && (
+        <Formulario
+          pacientes={pacientes}
+          setPacientes={setPacientes}
+          paciente={paciente}
+          setPaciente={setPaciente}
+          cerrarModal={cerrarModal}
+        />
+      )}
+
+      <Modal visible={modalPaciente} animationType={'fade'}>
+        <InformacionPaciente
+          paciente={paciente}
+          setModalPaciente={setModalPaciente}
+          setPaciente={setPaciente}
+        />
+      </Modal>
     </SafeAreaView>
   );
 };
